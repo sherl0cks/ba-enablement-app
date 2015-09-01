@@ -53,13 +53,6 @@ public class EmbeddedStatelessDecisionService implements StatelessDecisionServic
 			}
 		}
 
-		try {
-			StatelessKieSession kieSession = kieContainer.newStatelessKieSession();
-			kieSession.getKieBase(); // this loads the rules and builds the base so the first execution isn't slow
-		} catch (Exception e) {
-			LOGGER.warn("There is no KieModule on the classpath. Upgrade the KieContainer to a valid KieModule to fire rules");
-		}
-
 		/**
 		 * Break point here to find what rules are in the KIE Base
 		 */
