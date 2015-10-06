@@ -9,10 +9,14 @@ import org.jbpm.services.api.ProcessService;
 import org.jbpm.services.api.RuntimeDataService;
 import org.jbpm.services.api.UserTaskService;
 import org.jbpm.services.api.model.DeploymentUnit;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.api.builder.helper.FluentKieModuleDeploymentHelper;
 import org.kie.api.builder.helper.KieModuleDeploymentHelper;
+import org.kie.api.task.TaskService;
+import org.kie.internal.query.QueryContext;
+import org.kie.internal.query.QueryFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,11 +28,11 @@ import bitronix.tm.resource.jdbc.PoolingDataSource;
 @ActiveProfiles("test")
 public class BpmTest extends AbstractJUnit4SpringContextTests {
 
-	protected static final String GROUP_ID = "com.redhat";
-	protected static final String ARTIFACT_ID = "knowledge";
-	protected static final String VERSION = "1.1-SNAPSHOT";
+	protected static final String GROUP_ID = "com.rhc";
+	protected static final String ARTIFACT_ID = "bpms-knowledge";
+	protected static final String VERSION = "1.0.6-SNAPSHOT";
 	protected static final DeploymentUnit DEPLOYMENT_UNIT = new KModuleDeploymentUnit(GROUP_ID, ARTIFACT_ID, VERSION);
-	protected static final String PROCESS_ID = "defaultPackage.Process"; // TODO this might be different for you
+	protected static final String PROCESS_ID = "com.rhc.SimpleTask"; // TODO this might be different for you
 
 	@Autowired
 	protected ProcessService processService;
@@ -48,15 +52,25 @@ public class BpmTest extends AbstractJUnit4SpringContextTests {
 
 		processService.startProcess(DEPLOYMENT_UNIT.getIdentifier(), PROCESS_ID, map);
 	}
+	
+	@Test
+	public void newTest(){
+		deploymentService.deploy(DEPLOYMENT_UNIT);
+		
+		runtimeDataService.getTasksAssignedAsBusinessAdministrator("jholmes", null);
+		
+		Assert.assertEquals(1, runtimeDataService.getProcessesByDeploymentId(DEPLOYMENT_UNIT.getIdentifier(), null).size() );
+	}
 
 	protected static PoolingDataSource pds;
 
 	@BeforeClass
 	public static void generalSetup() {
 		TestUtils.setupPoolingDataSource();
-		
+		/*
 		FluentKieModuleDeploymentHelper helper1 = KieModuleDeploymentHelper.newFluentInstance();
 		TestUtils.createDefaultKieBase(helper1);
 		helper1.setGroupId(GROUP_ID).setArtifactId(ARTIFACT_ID).setVersion(VERSION).addResourceFilePath("com/redhat/simple/Process.bpmn2").createKieJarAndDeployToMaven();
+		*/
 	}
 }
