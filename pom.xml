@@ -10,6 +10,7 @@
 
 	<modules>
 		<module>kie-services</module>
+		<module>bill-of-materials</module>
 	</modules>
 
 </project>
